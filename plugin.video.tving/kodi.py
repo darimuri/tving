@@ -1,25 +1,43 @@
 # -*- coding: utf-8 -*-
 import os
 import urllib
-import xbmcplugin, xbmcgui, xbmcaddon
+import sys
+import xbmc, xbmcplugin, xbmcgui, xbmcaddon
 from urlparse import parse_qs
 
 __addon__ = xbmcaddon.Addon()
 __language__  = __addon__.getLocalizedString
 sys.path.append(os.path.join( xbmc.translatePath( __addon__.getAddonInfo('path') ), 'resources', 'lib' ))
-from tving import *
+from tving import api
+
+LOGINDATA = ''
+try:
+    profile = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
+    LOCAL_PROGRAM_LIST = xbmc.translatePath(os.path.join( profile, 'programlist.txt'))
+    LOGINDATA = xbmc.translatePath(os.path.join( profile, 'login.dat'))
+except:
+    pass
+
+try:
+    if LOGINDATA is '':
+        LOCAL_PROGRAM_LIST = os.path.join( os.getcwd(), 'programlist.txt')
+        LOGINDATA = os.path.join( os.getcwd(), 'login.dat')
+except:
+    pass
+
+tvingapi = api.TvingAPI(LOGINDATA, LOCAL_PROGRAM_LIST, "http://192.168.0.100:9999", "abcde")
 
 def Main():
     login_type = 'CJONE'
     if __addon__.getSetting('login_type') == 1: login_type = 'TVING'
-    message = DoStartLoginCheck(__addon__.getSetting('id'), __addon__.getSetting('pw'), login_type, __addon__.getSetting('use_local_logindata'))
+    message = tvingapi.DoStartLoginCheck(__addon__.getSetting('id'), __addon__.getSetting('pw'), login_type, __addon__.getSetting('use_local_logindata'))
     #message = DoStartLoginCheckWithToken()
     addDir('LIVE', None, None, True, 'Menu', 'LIVE', None, None)
     addDir('다시보기', None, None, True, 'Menu', 'VOD', None, None)
     addDir('Watched', None, None, True, 'ContentList', 'WATCHED::', None, 1)
     addDir(message, None, None, True, None, None, None, None)
     
-    if GetLoginStatus() is not 'SUCCESS':
+    if tvingapi.GetLoginStatus() is not 'SUCCESS':
         dialog = xbmcgui.Dialog()
         ret = dialog.yesno(__addon__.getAddonInfo('name'), __language__(30201).encode('utf8'), __language__(30202).encode('utf8'))
         if ret == True:
@@ -31,7 +49,7 @@ def Main():
 
 
 def Menu(p):
-    for item in GetMenu():
+    for item in tvingapi.GetMenu():
         tmp = item.split(':')
         if p['param'] == tmp[0]:
             addDir(tmp[1], None, None, True, 'ContentList', item, 'program', 1)
@@ -45,7 +63,7 @@ def ContentList(p):
     param = tmp[2]
     pageNo = p['pageNo']
     mode = p['param2']
-    has_more, items = GetList(type, param, pageNo)
+    has_more, items = tvingapi.GetList(type, param, pageNo)
     for item in items:
         if type == 'LIVE':
             title2 = item['channel_title']
@@ -91,7 +109,7 @@ def PlayVideo( p ):
     code = p['param']
     login_type = 'CJONE'
     if __addon__.getSetting('login_type') == 1: login_type = 'TVING'
-    url = GetURL(code, QUALITYS[quality],__addon__.getSetting('id'), __addon__.getSetting('pw'), login_type)
+    url = tvingapi.GetURL(code, api.QUALITYS[quality],__addon__.getSetting('id'), __addon__.getSetting('pw'), login_type)
     if url is None:
         addon_noti( __language__(30001).encode('utf8') )
         return
@@ -108,24 +126,24 @@ def PlayVideo( p ):
 
     tmps = p['param2'].split('|')
     data = '|'.join([tmps[0], tmps[1], urllib.unquote(tmps[2].encode('utf-8')), tmps[3]])
-    SaveWatchedList(data)
+    tvingapi.SaveWatchedList(data)
     item = xbmcgui.ListItem(path=url)
     xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
 
 
 def GetQuality():
     #isManualQuality = __addon__.getSetting('manual_quality')
-    isManualQuality = GetSetting('manual_quality')
+    isManualQuality = tvingapi.GetSetting('manual_quality')
     quality = None
     if (isManualQuality == 'true'):
-        choose_idx = xbmcgui.Dialog().select('Quality'.encode('utf-8'), QUALITYS_STRING)
-        if choose_idx > -1: quality = QUALITYS_STRING[choose_idx]
+        choose_idx = xbmcgui.Dialog().select('Quality'.encode('utf-8'), api.QUALITYS_STRING)
+        if choose_idx > -1: quality = api.QUALITYS_STRING[choose_idx]
         else: quality = None
         quality
     else:
         #selected_quality = __addon__.getSetting('selected_quality')
-        selected_quality = GetSetting('selected_quality')
-        quality =  QUALITYS_STRING[int(selected_quality)]
+        selected_quality = tvingapi.GetSetting('selected_quality')
+        quality =  api.QUALITYS_STRING[int(selected_quality)]
     return quality
 
 
