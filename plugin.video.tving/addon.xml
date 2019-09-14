@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.tving" name="TVING" version="0.5.1" provider-name="soju6jan">
 	<requires>
-		<import addon="xbmc.python" version="2.1.0"/>
+		<import addon="xbmc.python" version="2.7.16"/>
+		<import addon="script.module.pycryptodome" version="3.9.0"/>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="kodi.py">
     	<provides>video</provides>

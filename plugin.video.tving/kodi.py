@@ -25,7 +25,7 @@ try:
 except:
     pass
 
-tvingapi = api.TvingAPI(LOGINDATA, LOCAL_PROGRAM_LIST, "http://192.168.0.100:9999", "abcde")
+tvingapi = api.TvingAPI(LOGINDATA, LOCAL_PROGRAM_LIST)
 
 def Main():
     login_type = 'CJONE'

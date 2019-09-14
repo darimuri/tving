@@ -1,3 +1,7 @@
 .venv/
 .vscode/
 *.pyc
+auth.py
+login.dat
+*.zip
+.DS_Store

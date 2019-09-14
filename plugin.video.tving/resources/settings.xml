@@ -7,6 +7,4 @@
 	<setting type="sep"/>
 	<setting id="selected_quality" type="enum" label="30104" lvalues="30108|30109|30110" />
 	<setting id="manual_quality" type="bool" label="30105" default="false" />
-	<setting id="sjva_url" type="text" label="30111" default="" />
-	<setting id="sjva_token" type="text" label="30112" default="" />
 </settings>

@@ -14,3 +14,10 @@ source .venv/bin/activate
 py -3 -m venv .venv
 source .venv/bin/activate
 ```
+
+#### Build
+```
+rm -rf plugin.video.tving/resources/lib/*
+cp -a tving plugin.video.tving/resources/lib/
+zip -r plugin.video.tving.zip plugin.video.tving
+```
