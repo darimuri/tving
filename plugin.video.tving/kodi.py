@@ -2,13 +2,13 @@
 import os
 import urllib
 import sys
-import xbmc, xbmcplugin, xbmcgui, xbmcaddon
 from urlparse import parse_qs
+import xbmc, xbmcplugin, xbmcgui, xbmcaddon
 
 __addon__ = xbmcaddon.Addon()
 __language__  = __addon__.getLocalizedString
 sys.path.append(os.path.join( xbmc.translatePath( __addon__.getAddonInfo('path') ), 'resources', 'lib' ))
-from tving import api
+import api
 
 LOGINDATA = ''
 try:
@@ -108,8 +108,11 @@ def PlayVideo( p ):
 
     code = p['param']
     login_type = 'CJONE'
+    
     if __addon__.getSetting('login_type') == 1: login_type = 'TVING'
+    
     url = tvingapi.GetURL(code, api.QUALITYS[quality],__addon__.getSetting('id'), __addon__.getSetting('pw'), login_type)
+    
     if url is None:
         addon_noti( __language__(30001).encode('utf8') )
         return
@@ -133,7 +136,7 @@ def PlayVideo( p ):
 
 def GetQuality():
     #isManualQuality = __addon__.getSetting('manual_quality')
-    isManualQuality = tvingapi.GetSetting('manual_quality')
+    isManualQuality = GetSetting('manual_quality')
     quality = None
     if (isManualQuality == 'true'):
         choose_idx = xbmcgui.Dialog().select('Quality'.encode('utf-8'), api.QUALITYS_STRING)
@@ -142,9 +145,22 @@ def GetQuality():
         quality
     else:
         #selected_quality = __addon__.getSetting('selected_quality')
-        selected_quality = tvingapi.GetSetting('selected_quality')
+        selected_quality = GetSetting('selected_quality')
         quality =  api.QUALITYS_STRING[int(selected_quality)]
     return quality
+
+def GetSetting(type):
+    try:
+        ret = xbmcaddon.Addon().getSetting(type)
+        return ret
+    except:
+        pass
+
+    try:
+        ret = Prefs[type]
+        return ret
+    except:
+        pass
 
 
 #########################
@@ -169,6 +185,17 @@ def get_params():
         p[i] = p[i][0]
     return p
 
+def LOG(str):
+    try :
+        try:
+            xbmc.log("[%s-%s]: %s" %(xbmcaddon.Addon().getAddonInfo('id'), xbmcaddon.Addon().getAddonInfo('version'), str), level=xbmc.LOGNOTICE)
+            log_message = str.encode('utf-8', 'ignore')
+        except:
+            log_message = 'TVING Exception'
+        xbmc.log("[%s-%s]: %s" %(xbmcaddon.Addon().getAddonInfo('id'), xbmcaddon.Addon().getAddonInfo('version'), log_message), level=xbmc.LOGNOTICE)
+        return
+    except:
+        pass
 
 params = get_params()
 try:
@@ -180,4 +207,3 @@ elif mode == 'Menu': Menu(params)
 elif mode == 'ContentList': ContentList(params)
 elif mode == 'PlayVideo': PlayVideo(params)
 else: LOG('NOT FUNCTION!!')
-

@@ -17,7 +17,7 @@ source .venv/bin/activate
 
 #### Build
 ```
-rm -rf plugin.video.tving/resources/lib/*
-cp -a tving plugin.video.tving/resources/lib/
+rm -rf plugin.video.tving/api.py
+cp -a api.py plugin.video.tving/
 zip -r plugin.video.tving.zip plugin.video.tving
 ```

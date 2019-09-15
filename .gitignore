@@ -5,3 +5,4 @@ auth.py
 login.dat
 *.zip
 .DS_Store
+plugin.video.tving/api.py

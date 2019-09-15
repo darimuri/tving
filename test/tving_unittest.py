@@ -3,12 +3,12 @@ import unittest   # The test framework
 import os
 import sys
 import auth
-from tving import api
+import api
 
 class Test_TestIncrementDecrement(unittest.TestCase):
     api = None
     def setUp(self):
-        self.api = api.TvingAPI("login.dat", "programlist.txt", "http://127.0.0.1:9999", "S3ZU5O4L8C80MZCT6W2L")
+        self.api = api.TvingAPI("login.dat", "programlist.txt")
         isLogin, e = self.api.DoLogin(auth.id, auth.password, "CJONE")
         self.assertTrue(isLogin)
         self.assertEqual(e, "Log")
