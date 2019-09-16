@@ -190,8 +190,10 @@ class TvingAPI:
                 result.append(info)
             return 'N', result
 
-        if type == 'LIVE': url = 'http://api.tving.com/v1/media/lives?pageNo=%s&pageSize=20&order=rating&adult=all&free=all&guest=all&scope=all' % page
-        else: url = 'http://api.tving.com/v1/media/episodes?pageNo=%s&pageSize=18&adult=all&guest=all&scope=all&personal=N' % page
+        pageSize = 1000
+
+        if type == 'LIVE': url = 'http://api.tving.com/v1/media/lives?pageNo=%s&pageSize=%d&order=rating&adult=all&free=all&guest=all&scope=all' % (page, pageSize)
+        else: url = 'http://api.tving.com/v1/media/episodes?pageNo=%s&pageSize=%d&adult=all&guest=all&scope=all&personal=N' % (page, pageSize)
         if param is not None: url += param
         url += DEFAULT_PARAM			
 

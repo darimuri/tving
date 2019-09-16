@@ -22,7 +22,7 @@ class Test_TestIncrementDecrement(unittest.TestCase):
     def test_GetList(self):
         param = None
         hasMore, listData = self.api.GetList('LIVE', param, 1)
-        self.assertEqual(hasMore, 'Y', "hasMore should be Y")
+        self.assertNotEqual(hasMore, 'Y', "hasMore should not be Y")
         self.assertIsNotNone(listData)
 
         ret = self.api.GetURL(listData[0]['live_code'], api.QUALITYS['HD'], auth.id, auth.password, "CJONE")
